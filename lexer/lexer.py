@@ -1,3 +1,4 @@
+from asyncio.unix_events import SelectorEventLoop
 from tok import Tok
 from tok import TokenType
 from tok import isKeyword
@@ -9,9 +10,13 @@ class Lexer:
         self.read_position = 0   # current reading position in input (after current char)
         self.ch = ''             # current char under examination
         self.readChar()
+        self.total = 0
 
     def isEOF(self):
         return self.ch != ''
+
+    def printTotal(self):
+        print(f'Total number of tokens: {self.total}')
 
     def readChar(self):
         if self.read_position >= len(self.input):
@@ -28,21 +33,21 @@ class Lexer:
 
         match self.ch:
             case '=':
-                tk = Tok(TokenType.ASSIGN , self.ch)
+                tk = Tok(TokenType.OPERATOR, self.ch)
             case ';':
-                tk = Tok(TokenType.SEMICOLON, self.ch)
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
             case '(':
-                tk = Tok(TokenType.LPAREN, self.ch)
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
             case ')':
-                tk = Tok(TokenType.RPAREN, self.ch)
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
             case ',':
-                tk = Tok(TokenType.COMMA, self.ch)
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
             case '+':
-                tk = Tok(TokenType.PLUS, self.ch)
+                tk = Tok(TokenType.OPERATOR, self.ch)
             case '{':
-                tk = Tok(TokenType.LBRACE, self.ch)
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
             case '}':
-                tk = Tok(TokenType.RBRACE, self.ch)
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
             case 0:
                 tk = Tok(TokenType.EOF, '')
             case _:
@@ -51,16 +56,19 @@ class Lexer:
                     type = isKeyword(literal)
                     tk = Tok(type, literal)
                     print(tk)
+                    self.total += 1
                     return tk
                 elif isDigit(self.ch):
-                    tk = Tok(TokenType.INT, self.readNumber())
+                    tk = Tok(TokenType.CONSTANT, self.readNumber())
                     print(tk)
+                    self.total += 1
                     return tk
                 else:
-                    tk = Tok(TokenType.ILLEGAL, self.ch)
+                    tk = Tok(TokenType.INVALID, self.ch)
 
         self.readChar()
         print(tk)
+        self.total += 1
         return tk
 
     def readIdentifier(self):

@@ -6,3 +6,6 @@ lex = Lexer(s)
 
 while lex.isEOF():
     lex.readToken()
+
+print()
+lex.printTotal()

@@ -4,30 +4,24 @@ class Tok:
         self.literal:str = literal
 
     def __str__(self):
-        return self.tokenType + " : " + self.literal
+        return self.tokenType + ": " + self.literal
 
 class TokenType:
-    ILLEGAL = "ILLEGAL"
-    EOF = "EOF"
-    IDENT = "IDENT"
-    INT = "INT"
-    ASSIGN = "="
-    PLUS = "+"
-    COMMA = ","
-    SEMICOLON = ";"
-    LPAREN = "("
-    RPAREN = ")"
-    LBRACE = "{"
-    RBRACE = "}"
-    FUNCTION = "FUNCTION"
-    VAR = "VAR"
+    KEYWORD = "KEYWORD"
+    PUNCTUATION = "PUNCTUATION"
+    IDENTIFIER = "IDENTIFIER"
+    OPERATOR = "OPERATOR"
+    CONSTANT = "CONSTANT"
 
-keywords = {
-    "fn": TokenType.FUNCTION,
-    "var": TokenType.VAR
-}
+    EOF = "EOF"
+    INVALID = "INVALID"
+
+keywords = [
+    "fn",
+    "var"
+]
 
 def isKeyword(identifier):
-    if keywords.get(identifier):
-        return keywords[identifier]
-    return TokenType.IDENT
+    if identifier in keywords:
+        return TokenType.KEYWORD
+    return TokenType.IDENTIFIER
