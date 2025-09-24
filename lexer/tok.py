@@ -1,10 +1,9 @@
 class Tok:
     def __init__(self, tokenType: str, literal: str):
-        self.tokenType:str = tokenType
-        self.literal:str = literal
-
+        self.tokenType = tokenType
+        self.literal = literal
     def __str__(self):
-        return self.tokenType + ": " + self.literal
+        return f"{self.tokenType}: {self.literal}"
 
 class TokenType:
     KEYWORD = "KEYWORD"
@@ -12,16 +11,11 @@ class TokenType:
     IDENTIFIER = "IDENTIFIER"
     OPERATOR = "OPERATOR"
     CONSTANT = "CONSTANT"
-
     EOF = "EOF"
     INVALID = "INVALID"
 
-keywords = [
-    "fn",
-    "var"
-]
+# Lo mínimo exigido: 'print'. Añadimos 'int' y 'var' para tus ejemplos.
+KEYWORDS = {"print", "int", "var"}
 
-def isKeyword(identifier):
-    if identifier in keywords:
-        return TokenType.KEYWORD
-    return TokenType.IDENTIFIER
+def keyword_or_identifier(identifier: str) -> str:
+    return TokenType.KEYWORD if identifier in KEYWORDS else TokenType.IDENTIFIER
