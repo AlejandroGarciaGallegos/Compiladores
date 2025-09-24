@@ -1,11 +1,31 @@
-from lexer import Lexer
+import argparse
+from .lexer import Lexer
+from .tok import TokenType
 
-s = "var abc = 12"
+def run(src: str):
+    lex = Lexer(src)
+    cats = []
+    while True:
+        tk = lex.next_token()
+        if tk.tokenType == TokenType.EOF:
+            break
+        # imprime solo la categoría en minúsculas
+        cats.append(tk.tokenType.lower())
+    print(" ".join(cats))
+    print(f"Total of tokens: {len(cats)}")
 
-lex = Lexer(s)
+if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+    p.add_argument("--str", dest="s", help="string a escanear")
+    p.add_argument("--file", dest="f", help="ruta del archivo a escanear")
+    args = p.parse_args()
 
-while lex.isEOF():
-    lex.readToken()
+    if args.s:
+        source = args.s
+    elif args.f:
+        with open(args.f, "r", encoding="utf-8") as fh:
+            source = fh.read()
+    else:
+        source = 'print x = 10;'
 
-print()
-lex.printTotal()
+    run(source)
