@@ -1,17 +1,15 @@
 import argparse
-from .lexer import Lexer
-from .tok import TokenType
+from lexer import Lexer
+from tok import TokenType
 
 def run(src: str):
     lex = Lexer(src)
-    cats = []
     while True:
-        tk = lex.next_token()
+        tk = lex.readToken()
         if tk.tokenType == TokenType.EOF:
             break
         print(tk)
-    print(" ".join(cats))
-    print(f"Total of tokens: {len(cats)}")
+        lex.printTotal()
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()

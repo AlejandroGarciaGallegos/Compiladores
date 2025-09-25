@@ -1,87 +1,92 @@
-from .tok import Tok, TokenType, keyword_or_identifier
+from tok import Tok, TokenType, isKeyword
 
 class Lexer:
-    def __init__(self, source: str):
-        self.input = source
-        self.pos = 0
-        self.read_pos = 0
-        self.ch = ""
-        self._read_char()
+    def __init__(self, input):
+        self.input = input
+        self.position = 0        # current position in input
+        self.read_position = 0   # current reading position in input
+        self.ch = ''             # current char under examination
+        self.readChar()
+        self.total = 0
 
-    # === core ===
-    def _read_char(self):
-        self.ch = "" if self.read_pos >= len(self.input) else self.input[self.read_pos]
-        self.pos = self.read_pos
-        self.read_pos += 1
+    def isEOF(self):
+        return self.ch != ''
 
-    def _peek_char(self):
-        return "" if self.read_pos >= len(self.input) else self.input[self.read_pos]
+    def printTotal(self):
+        print(f'Total number of tokens: {self.total}')
 
-    def _skip_ws(self):
-        while self.ch in (" ", "\t", "\r", "\n"):
-            self._read_char()
+    def readChar(self):
+        if self.read_position >= len(self.input):
+            self.ch = ''
+        else:
+            self.ch = self.input[self.read_position]
+        self.position = self.read_position
+        self.read_position += 1
 
-    # === scanners ===
-    def _read_identifier(self):
-        start = self.pos
-        while self.ch.isalpha() or self.ch.isdigit() or self.ch == "_":
-            self._read_char()
-        return self.input[start:self.pos]
+    def readToken(self):
+        tk = {}
+        self.skipWhitespace()
 
-    def _read_number(self):
-        start = self.pos
-        while self.ch.isdigit():
-            self._read_char()
-        return self.input[start:self.pos]
+        match self.ch:
+            case '=':
+                tk = Tok(TokenType.OPERATOR, self.ch)
+            case ';':
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
+            case '(':
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
+            case ')':
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
+            case ',':
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
+            case '+':
+                tk = Tok(TokenType.OPERATOR, self.ch)
+            case '{':
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
+            case '}':
+                tk = Tok(TokenType.PUNCTUATION, self.ch)
+            case 0:
+                tk = Tok(TokenType.EOF, '')
+            case _:
+                if isIdentifierLetter(self.ch):
+                    literal = self.readIdentifier()
+                    type = isKeyword(literal)
+                    tk = Tok(type, literal)
+                    print(tk)
+                    self.total += 1
+                    return tk
+                elif isDigit(self.ch):
+                    tk = Tok(TokenType.CONSTANT, self.readNumber())
+                    print(tk)
+                    self.total += 1
+                    return tk
+                else:
+                    tk = Tok(TokenType.INVALID, self.ch)
 
-    def _read_string(self):
-        # current ch == '"'
-        self._read_char()  # skip opening "
-        start = self.pos
-        while self.ch != "" and self.ch != '"':
-            if self.ch == "\\" and self._peek_char() == '"':
-                self._read_char()
-            self._read_char()
-        literal = self.input[start:self.pos]
-        if self.ch == '"':
-            self._read_char()  # skip closing "
-        return literal
+        self.readChar()
+        print(tk)
+        self.total += 1
+        return tk
 
-    # === public API ===
-    def next_token(self) -> Tok:
-        self._skip_ws()
+    def readIdentifier(self):
+        start = self.position
+        while isIdentifierLetter(self.ch):
+            self.readChar();
 
-        if self.ch == "":
-            return Tok(TokenType.EOF, "")
+        return self.input[start:self.position]
 
-        # string constant
-        if self.ch == '"':
-            lit = self._read_string()
-            return Tok(TokenType.CONSTANT, lit)
+    def readNumber(self):
+        start = self.position
+        while isDigit(self.ch):
+            self.readChar();
 
-        # identifier or keyword
-        if self.ch.isalpha() or self.ch == "_":
-            ident = self._read_identifier()
-            return Tok(keyword_or_identifier(ident), ident)
+        return self.input[start:self.position]
 
-        # number
-        if self.ch.isdigit():
-            num = self._read_number()
-            return Tok(TokenType.CONSTANT, num)
+    def skipWhitespace(self):
+        while self.ch == ' ' or self.ch == '\t' or self.ch == '\n' or self.ch == '\r':
+            self.readChar()
 
-        # operators
-        if self.ch in ("=", "+", "-", "*", "/"):
-            tok = Tok(TokenType.OPERATOR, self.ch)
-            self._read_char()
-            return tok
+def isIdentifierLetter(ch):
+    return ('a' <= ch and ch <= 'z') or ('A' <= ch and ch <= 'Z') or ch == '_'
 
-        # punctuation
-        if self.ch in (";", ",", "(", ")", "{", "}", "[", "]"):
-            tok = Tok(TokenType.PUNCTUATION, self.ch)
-            self._read_char()
-            return tok
-
-        # anything else
-        tok = Tok(TokenType.INVALID, self.ch)
-        self._read_char()
-        return tok
+def isDigit(ch):
+    return '0' <= ch and ch <= '9'
