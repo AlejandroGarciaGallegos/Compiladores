@@ -14,8 +14,13 @@ class TokenType:
     EOF = "EOF"
     INVALID = "INVALID"
 
-# Lo mínimo exigido: 'print'. Añadimos 'int' y 'var' para tus ejemplos.
-KEYWORDS = {"print", "int", "var"}
+keywords = [
+    "print",
+    "var",
+    "int"
+]
 
-def keyword_or_identifier(identifier: str) -> str:
-    return TokenType.KEYWORD if identifier in KEYWORDS else TokenType.IDENTIFIER
+def isKeyword(identifier):
+    if identifier in keywords:
+        return TokenType.KEYWORD
+    return TokenType.IDENTIFIER

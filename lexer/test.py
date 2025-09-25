@@ -9,8 +9,7 @@ def run(src: str):
         tk = lex.next_token()
         if tk.tokenType == TokenType.EOF:
             break
-        # imprime solo la categoría en minúsculas
-        cats.append(tk.tokenType.lower())
+        print(tk)
     print(" ".join(cats))
     print(f"Total of tokens: {len(cats)}")
 
