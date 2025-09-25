@@ -16,7 +16,6 @@ class TokenType:
 
 keywords = [
     "print",
-    "var",
     "int"
 ]
 

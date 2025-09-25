@@ -13,7 +13,7 @@ class Lexer:
         return self.ch != ''
 
     def printTotal(self):
-        print(f'Total number of tokens: {self.total}')
+        print(f'\nTotal number of tokens: {self.total}')
 
     def readChar(self):
         if self.read_position >= len(self.input):
@@ -30,6 +30,8 @@ class Lexer:
         match self.ch:
             case '=':
                 tk = Tok(TokenType.OPERATOR, self.ch)
+            case '+':
+                tk = Tok(TokenType.OPERATOR, self.ch)
             case ';':
                 tk = Tok(TokenType.PUNCTUATION, self.ch)
             case '(':
@@ -38,14 +40,17 @@ class Lexer:
                 tk = Tok(TokenType.PUNCTUATION, self.ch)
             case ',':
                 tk = Tok(TokenType.PUNCTUATION, self.ch)
-            case '+':
-                tk = Tok(TokenType.OPERATOR, self.ch)
             case '{':
                 tk = Tok(TokenType.PUNCTUATION, self.ch)
             case '}':
                 tk = Tok(TokenType.PUNCTUATION, self.ch)
+            case '"':
+                tk = self.readString()
+                self.total += 1
+                return tk
             case '':
                 tk = Tok(TokenType.EOF, '')
+                return tk
             case _:
                 if isIdentifierLetter(self.ch):
                     literal = self.readIdentifier()
@@ -54,7 +59,7 @@ class Lexer:
                     self.total += 1
                     return tk
                 elif isDigit(self.ch):
-                    tk = Tok(TokenType.CONSTANT, self.readNumber())
+                    tk = self.readNumber()
                     self.total += 1
                     return tk
                 else:
@@ -76,7 +81,17 @@ class Lexer:
         while isDigit(self.ch):
             self.readChar();
 
-        return self.input[start:self.position]
+        return Tok(TokenType.CONSTANT, self.input[start:self.position])
+
+    def readString(self):
+        start = self.position
+        self.readChar()
+        while self.ch != '"' and self.ch != '':
+            self.readChar()
+            if (self.ch == ''):
+                return Tok(TokenType.INVALID, self.input[start:self.position])
+        self.readChar()
+        return Tok(TokenType.CONSTANT, self.input[start:self.position])
 
     def skipWhitespace(self):
         while self.ch == ' ' or self.ch == '\t' or self.ch == '\n' or self.ch == '\r':
