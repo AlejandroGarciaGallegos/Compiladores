@@ -9,7 +9,7 @@ def run(src: str):
         if tk.tokenType == TokenType.EOF:
             break
         print(tk)
-        lex.printTotal()
+    lex.printTotal()
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()

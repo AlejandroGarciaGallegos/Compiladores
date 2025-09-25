@@ -44,26 +44,23 @@ class Lexer:
                 tk = Tok(TokenType.PUNCTUATION, self.ch)
             case '}':
                 tk = Tok(TokenType.PUNCTUATION, self.ch)
-            case 0:
+            case '':
                 tk = Tok(TokenType.EOF, '')
             case _:
                 if isIdentifierLetter(self.ch):
                     literal = self.readIdentifier()
                     type = isKeyword(literal)
                     tk = Tok(type, literal)
-                    print(tk)
                     self.total += 1
                     return tk
                 elif isDigit(self.ch):
                     tk = Tok(TokenType.CONSTANT, self.readNumber())
-                    print(tk)
                     self.total += 1
                     return tk
                 else:
                     tk = Tok(TokenType.INVALID, self.ch)
 
         self.readChar()
-        print(tk)
         self.total += 1
         return tk
 
