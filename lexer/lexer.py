@@ -30,7 +30,20 @@ class Lexer:
         match self.ch:
             case '=':
                 tk = Tok(TokenType.OPERATOR, self.ch)
+                self.readChar()
+                self.total += 1
+                if self.ch=="=":
+                    tk.literal="=="
+                    self.readChar()
+                    self.total += 1
+                return tk
             case '+':
+                tk = Tok(TokenType.OPERATOR, self.ch)
+            case '-':
+                tk = Tok(TokenType.OPERATOR, self.ch)
+            case '/':
+                tk = Tok(TokenType.OPERATOR, self.ch)
+            case '*':
                 tk = Tok(TokenType.OPERATOR, self.ch)
             case ';':
                 tk = Tok(TokenType.PUNCTUATION, self.ch)
@@ -91,14 +104,14 @@ class Lexer:
             if (self.ch == ''):
                 return Tok(TokenType.INVALID, self.input[start:self.position])
         self.readChar()
-        return Tok(TokenType.CONSTANT, self.input[start:self.position])
+        return Tok(TokenType.LITERALLY, self.input[start:self.position])
 
     def skipWhitespace(self):
         while self.ch == ' ' or self.ch == '\t' or self.ch == '\n' or self.ch == '\r':
             self.readChar()
 
 def isIdentifierLetter(ch):
-    return ('a' <= ch and ch <= 'z') or ('A' <= ch and ch <= 'Z') or ch == '_'
+    return ('a' <= ch and ch <= 'z') or ('A' <= ch and ch <= 'Z') or ch == '_' or ('0' <= ch and ch <= '9')
 
 def isDigit(ch):
-    return '0' <= ch and ch <= '9'
+    return '0' <= ch and ch <= '9' 
