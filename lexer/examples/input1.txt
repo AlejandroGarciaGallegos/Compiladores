@@ -1,2 +1,8 @@
 print("This is an example...");
 int x = 10;
+if(x==3){
+    x+=1;
+}else{
+    x-=1;
+}
+float y3=4;
