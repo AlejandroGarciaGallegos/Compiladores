@@ -84,7 +84,7 @@ class Lexer:
 
     def readIdentifier(self):
         start = self.position
-        while isIdentifierLetter(self.ch):
+        while isIdentifierLetter(self.ch) or '0' <= self.ch and self.ch <= '9':
             self.readChar();
 
         return self.input[start:self.position]
@@ -111,7 +111,7 @@ class Lexer:
             self.readChar()
 
 def isIdentifierLetter(ch):
-    return ('a' <= ch and ch <= 'z') or ('A' <= ch and ch <= 'Z') or ch == '_' or ('0' <= ch and ch <= '9')
+    return ('a' <= ch and ch <= 'z') or ('A' <= ch and ch <= 'Z') or ch == '_'
 
 def isDigit(ch):
     return '0' <= ch and ch <= '9' 
